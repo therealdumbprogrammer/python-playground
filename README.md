@@ -25,6 +25,7 @@
    - [Creating and Importing Modules](#creating-and-importing-modules)
    - [Understanding Packages](#understanding-packages)
 5. [Exception Handling](#exception-handling)
+6. [File Input/Output (File I/O)](#file-inputoutput-file-io)
 
 ---
 
@@ -752,5 +753,217 @@
       print(e)
   # Output: Negative number provided.
   ```
+
+---
+# Python File Input/Output (File I/O) Cheat Sheet
+
+## Basic File Operations
+
+### Opening Files
+
+To perform file operations, use the `open()` function which returns a file object.
+
+```python
+file = open('filename', 'mode')
+```
+
+**Common Modes:**
+- `'r'`: Read mode (default)
+- `'w'`: Write mode (creates/truncates the file)
+- `'a'`: Append mode (adds to the end of the file)
+- `'rb'`: Read binary
+- `'wb'`: Write binary
+
+### Reading from Files
+
+**Methods:**
+- `read(size=-1)`: Reads the entire file or specified number of characters.
+- `readline()`: Reads the next line from the file.
+- `readlines()`: Reads all lines into a list.
+
+```python
+content = file.read()
+line = file.readline()
+lines = file.readlines()
+```
+
+### Writing to Files
+
+**Methods:**
+- `write(string)`: Writes a string to the file.
+- `writelines(list)`: Writes a list of strings to the file.
+
+```python
+file.write("Hello, World!\n")
+file.writelines(["Line 1\n", "Line 2\n"])
+```
+
+### Closing Files
+
+Always close files to free up system resources.
+
+```python
+file.close()
+```
+
+## Using Context Managers (`with` Statement)
+
+The `with` statement ensures that files are properly closed after their suite finishes, even if an error occurs.
+
+```python
+with open('filename', 'mode') as file:
+    # Perform file operations
+```
+
+## Working with Different File Formats
+
+### Text Files
+
+Store data in a readable format. Use standard file methods to read and write.
+
+### CSV Files
+
+Use the `csv` module to handle CSV (Comma-Separated Values) files.
+
+**Reading CSV Files:**
+```python
+import csv
+
+with open('data.csv', 'r') as csvfile:
+    csvreader = csv.reader(csvfile)
+    for row in csvreader:
+        print(row)
+```
+
+**Writing CSV Files:**
+```python
+import csv
+
+data = [
+    ['Name', 'Age', 'Grade'],
+    ['Alice', '23', 'A'],
+    ['Bob', '22', 'B']
+]
+
+with open('data.csv', 'w', newline='') as csvfile:
+    csvwriter = csv.writer(csvfile)
+    csvwriter.writerows(data)
+```
+
+### JSON Files
+
+Use the `json` module to handle JSON (JavaScript Object Notation) files.
+
+**Reading JSON Files:**
+```python
+import json
+
+with open('data.json', 'r') as jsonfile:
+    data = json.load(jsonfile)
+    print(data)
+```
+
+**Writing JSON Files:**
+```python
+import json
+
+data = {
+    "name": "Alice",
+    "age": 23,
+    "grade": "A"
+}
+
+with open('data.json', 'w') as jsonfile:
+    json.dump(data, jsonfile, indent=4)
+```
+
+### Binary Files
+
+Handle non-text data like images, audio, and executable files using binary modes.
+
+**Reading Binary Files:**
+```python
+with open('image.png', 'rb') as file:
+    binary_data = file.read()
+```
+
+**Writing Binary Files:**
+```python
+binary_data = b'\x89PNG\r\n\x1a\n...'
+
+with open('new_image.png', 'wb') as file:
+    file.write(binary_data)
+```
+
+## Handling File Exceptions
+
+File operations can raise various exceptions. It's essential to handle them to make your programs robust.
+
+**Common Exceptions:**
+- `FileNotFoundError`: Raised when a file or directory is requested but doesn't exist.
+- `PermissionError`: Raised when the program lacks the required permissions.
+- `IOError`: Raised for input/output operations errors.
+- `IsADirectoryError`: Raised when a directory is expected but found a file.
+
+**Example:**
+```python
+try:
+    with open('nonexistent.txt', 'r') as file:
+        content = file.read()
+except FileNotFoundError:
+    print("Error: The file does not exist.")
+except PermissionError:
+    print("Error: You do not have permission to access this file.")
+except IOError as e:
+    print(f"Error: An I/O error occurred. {e}")
+```
+
+## Best Practices
+
+1. **Use Context Managers:**
+   - Ensures files are properly closed.
+   ```python
+   with open('file.txt', 'r') as file:
+       content = file.read()
+   ```
+
+2. **Handle Specific Exceptions:**
+   - Provide meaningful error messages.
+   ```python
+   try:
+       with open('file.txt', 'r') as file:
+           content = file.read()
+   except FileNotFoundError:
+       print("File not found.")
+   ```
+
+3. **Use Proper File Modes:**
+   - Choose appropriate mode based on operation.
+
+4. **Close Files Properly:**
+   - If not using `with`, ensure `file.close()` is called.
+
+5. **Validate File Paths:**
+   - Ensure correct and accessible file paths.
+
+6. **Use `csv` and `json` Modules for Structured Data:**
+   - Simplifies handling CSV and JSON data.
+
+7. **Avoid Hardcoding File Paths:**
+   - Use variables or configuration files to manage paths.
+
+8. **Optimize Performance for Large Files:**
+   - Read or write in chunks instead of loading the entire file into memory.
+   ```python
+   with open('large_file.txt', 'r') as file:
+       while True:
+           chunk = file.read(1024)  # Read in 1KB chunks
+           if not chunk:
+               break
+           process(chunk)
+   ```
+
+9. **Secure File Handling:**
+   - Validate and sanitize file names and paths to prevent security vulnerabilities like path traversal attacks.
 
 ---
